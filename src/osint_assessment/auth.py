@@ -23,18 +23,18 @@ class AuthorizationRecord:
     @classmethod
     def from_dict(cls, payload: Dict[str, Any]) -> "AuthorizationRecord":
         return cls(
-            ref=payload["ref"],
-            org=payload["org"],
-            authority=payload["authority"],
-            issued_at=datetime.fromisoformat(payload["issued_at"]),
-            expires_at=datetime.fromisoformat(payload["expires_at"]),
-            scope=payload["scope"],
-            domains=list(payload.get("domains", [])),
-            repositories=list(payload.get("repositories", [])),
-            allowed_sources=list(payload.get("allowed_sources", [])),
+            ref=str(payload["ref"]),
+            org=str(payload["org"]),
+            authority=str(payload["authority"]),
+            issued_at=datetime.fromisoformat(str(payload["issued_at"])),
+            expires_at=datetime.fromisoformat(str(payload["expires_at"])),
+            scope=str(payload["scope"]),
+            domains=[str(item).strip() for item in payload.get("domains", [])],
+            repositories=[str(item).strip() for item in payload.get("repositories", [])],
+            allowed_sources=[str(item).strip() for item in payload.get("allowed_sources", [])],
             retention_days=int(payload.get("retention_days", 30)),
-            stop_conditions=list(payload.get("stop_conditions", [])),
-            notes=payload.get("notes", ""),
+            stop_conditions=[str(item).strip() for item in payload.get("stop_conditions", [])],
+            notes=str(payload.get("notes", "")),
         )
 
     def is_active(self, now: Optional[datetime] = None) -> bool:
@@ -43,27 +43,13 @@ class AuthorizationRecord:
 
     def scope_covers_asset(self, asset: str) -> bool:
         normalized = asset.strip().lower()
-        return any(normalized == d.lower() or normalized.startswith(f"{d.lower()}.") for d in self.domains) or any(
-            normalized == r.lower() for r in self.repositories
-        )
+        domain_match = any(normalized == d.lower() or normalized.startswith(f"{d.lower()}.") for d in self.domains)
+        repo_match = any(normalized == r.lower() for r in self.repositories)
+        return domain_match or repo_match
 
 
 class ScopeRequiredError(RuntimeError):
     pass
-
-
-def ensure_collection_allowed(case: "CaseRecord") -> None:
-    if case.authorization is None:
-        raise ScopeRequiredError("SCOPE_REQUIRED: authorization record is missing")
-
-    now = datetime.now(timezone.utc)
-    if not case.authorization.is_active(now):
-        raise ScopeRequiredError(
-            f"SCOPE_REQUIRED: authorization {case.authorization.ref} is expired or not yet valid"
-        )
-
-    if not case.is_in_scope:
-        raise ScopeRequiredError("SCOPE_REQUIRED: asset is outside the authorized scope")
 
 
 @dataclass
@@ -86,16 +72,16 @@ class CaseRecord:
             authorization = AuthorizationRecord.from_dict(payload["authorization"])
 
         return cls(
-            case_id=payload["case_id"],
-            org_name=payload["org_name"],
+            case_id=str(payload["case_id"]),
+            org_name=str(payload["org_name"]),
             authorization=authorization,
-            domains=list(payload.get("domains", [])),
-            repositories=list(payload.get("repositories", [])),
-            allowed_sources=list(payload.get("allowed_sources", [])),
-            collection_window=payload.get("collection_window", {}),
+            domains=[str(item).strip() for item in payload.get("domains", [])],
+            repositories=[str(item).strip() for item in payload.get("repositories", [])],
+            allowed_sources=[str(item).strip() for item in payload.get("allowed_sources", [])],
+            collection_window=dict(payload.get("collection_window", {})),
             retention_days=int(payload.get("retention_days", 30)),
-            stop_conditions=list(payload.get("stop_conditions", [])),
-            notes=payload.get("notes", ""),
+            stop_conditions=[str(item).strip() for item in payload.get("stop_conditions", [])],
+            notes=str(payload.get("notes", "")),
         )
 
     @classmethod
@@ -112,10 +98,21 @@ class CaseRecord:
             return False
         if not self.domains and not self.repositories:
             return False
-        for asset in self.domains + self.repositories:
-            if self.authorization.scope_covers_asset(asset):
-                return True
-        return False
+        return any(self.authorization.scope_covers_asset(asset) for asset in self.all_assets())
 
     def all_assets(self) -> List[str]:
         return list(dict.fromkeys(self.domains + self.repositories))
+
+
+def ensure_collection_allowed(case: CaseRecord) -> None:
+    if case.authorization is None:
+        raise ScopeRequiredError("SCOPE_REQUIRED: authorization record is missing")
+
+    now = datetime.now(timezone.utc)
+    if not case.authorization.is_active(now):
+        raise ScopeRequiredError(
+            f"SCOPE_REQUIRED: authorization {case.authorization.ref} is expired or not yet valid"
+        )
+
+    if not case.is_in_scope:
+        raise ScopeRequiredError("SCOPE_REQUIRED: asset is outside the authorized scope")

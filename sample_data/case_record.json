@@ -4,10 +4,10 @@
   "authorization": {
     "ref": "AUTH-EXAMPLE-001",
     "org": "Example Org",
-    "authority": "Chief Information Security Officer",
+    "authority": "CISO",
     "issued_at": "2026-01-01T00:00:00+00:00",
     "expires_at": "2027-01-01T00:00:00+00:00",
-    "scope": "Confirm public exposure of approved domains and authorized public repositories only.",
+    "scope": "Assess approved domains and public repositories only.",
     "domains": [
       "example.org",
       "www.example.org",
@@ -18,10 +18,10 @@
       "ExampleOrg/ops-runbooks"
     ],
     "allowed_sources": [
-      "certificate-transparency",
+      "certificate_transparency",
       "rdap",
-      "public-archive",
-      "authorized-repository-search"
+      "public_archive",
+      "authorized_repository_search"
     ],
     "retention_days": 90,
     "stop_conditions": [
@@ -29,7 +29,7 @@
       "asset outside approved scope",
       "sensitive data appears in a non-approved source"
     ],
-    "notes": "Synthetic example only; no real target data."
+    "notes": "Synthetic example only."
   },
   "domains": [
     "example.org",
@@ -41,10 +41,10 @@
     "ExampleOrg/ops-runbooks"
   ],
   "allowed_sources": [
-    "certificate-transparency",
+    "certificate_transparency",
     "rdap",
-    "public-archive",
-    "authorized-repository-search"
+    "public_archive",
+    "authorized_repository_search"
   ],
   "collection_window": {
     "start": "2026-10-01T00:00:00+00:00",
@@ -56,5 +56,5 @@
     "asset outside approved scope",
     "sensitive data appears in a non-approved source"
   ],
-  "notes": "This is a fictional sample case created for safe development and testing only."
+  "notes": "This is a fictional sample case for testing only."
 }
