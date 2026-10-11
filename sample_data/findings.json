@@ -1,0 +1,52 @@
+[
+  {
+    "finding_id": "F-CASE-ORG-001-0001",
+    "case_id": "CASE-ORG-001",
+    "asset": "api.example.org",
+    "authorization_ref": "AUTH-EXAMPLE-001",
+    "auth_expiry": "2027-01-01T00:00:00+00:00",
+    "source_url": "https://example.org/public/metadata",
+    "collected_at": "2026-10-11T14:20:00+00:00",
+    "check_time": "2026-10-11T14:20:00+00:00",
+    "evidence_type": "public-archive-metadata",
+    "redacted_locator": "api-[redacted].example.org",
+    "confidence_rationale": "Historical public record, lower confidence, corroborated by an approved archival source and a public metadata page.",
+    "freshness_days": 10,
+    "corroboration": [
+      "public archive snapshot",
+      "domain metadata page"
+    ],
+    "limitations": [
+      "archive entry is historical and may be stale",
+      "not proof of active exposure or compromise"
+    ],
+    "recommended_owner": "security-operations@example.org",
+    "human_verified": false,
+    "closure_status": "OPEN"
+  },
+  {
+    "finding_id": "F-CASE-ORG-001-0002",
+    "case_id": "CASE-ORG-001",
+    "asset": "ExampleOrg/public-docs",
+    "authorization_ref": "AUTH-EXAMPLE-001",
+    "auth_expiry": "2027-01-01T00:00:00+00:00",
+    "source_url": "https://github.com/ExampleOrg/public-docs",
+    "collected_at": "2026-10-11T15:10:00+00:00",
+    "check_time": "2026-10-11T15:10:00+00:00",
+    "evidence_type": "authorized-public-repository-pattern-review",
+    "redacted_locator": "README.md#L10-L25",
+    "confidence_rationale": "Repository review is limited to an authorized public repository and only checks non-secret patterns. Findings are informational only.",
+    "freshness_days": 3,
+    "corroboration": [
+      "repository file path",
+      "authorized repository review"
+    ],
+    "limitations": [
+      "pattern matches are not proof of a real secret",
+      "repository content is treated as untrusted input"
+    ],
+    "recommended_owner": "repo-security@example.org",
+    "human_verified": false,
+    "closure_status": "OPEN"
+  }
+]

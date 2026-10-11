@@ -1,0 +1,60 @@
+{
+  "case_id": "CASE-ORG-001",
+  "org_name": "Example Org",
+  "authorization": {
+    "ref": "AUTH-EXAMPLE-001",
+    "org": "Example Org",
+    "authority": "Chief Information Security Officer",
+    "issued_at": "2026-01-01T00:00:00+00:00",
+    "expires_at": "2027-01-01T00:00:00+00:00",
+    "scope": "Confirm public exposure of approved domains and authorized public repositories only.",
+    "domains": [
+      "example.org",
+      "www.example.org",
+      "api.example.org"
+    ],
+    "repositories": [
+      "ExampleOrg/public-docs",
+      "ExampleOrg/ops-runbooks"
+    ],
+    "allowed_sources": [
+      "certificate-transparency",
+      "rdap",
+      "public-archive",
+      "authorized-repository-search"
+    ],
+    "retention_days": 90,
+    "stop_conditions": [
+      "authorization missing or expired",
+      "asset outside approved scope",
+      "sensitive data appears in a non-approved source"
+    ],
+    "notes": "Synthetic example only; no real target data."
+  },
+  "domains": [
+    "example.org",
+    "www.example.org",
+    "api.example.org"
+  ],
+  "repositories": [
+    "ExampleOrg/public-docs",
+    "ExampleOrg/ops-runbooks"
+  ],
+  "allowed_sources": [
+    "certificate-transparency",
+    "rdap",
+    "public-archive",
+    "authorized-repository-search"
+  ],
+  "collection_window": {
+    "start": "2026-10-01T00:00:00+00:00",
+    "end": "2026-10-31T23:59:59+00:00"
+  },
+  "retention_days": 90,
+  "stop_conditions": [
+    "authorization missing or expired",
+    "asset outside approved scope",
+    "sensitive data appears in a non-approved source"
+  ],
+  "notes": "This is a fictional sample case created for safe development and testing only."
+}
